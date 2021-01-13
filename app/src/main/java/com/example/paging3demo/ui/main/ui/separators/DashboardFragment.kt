@@ -1,93 +1,83 @@
-package com.example.paging3demo.ui
+package com.example.paging3demo.ui.main.ui.separators
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.paging3demo.databinding.ActivityMainBinding
+import com.example.paging3demo.databinding.FragmentDashboardBinding
 import com.example.paging3demo.ui.adapter.MovieAdapter
-import com.example.paging3demo.ui.adapter.MovieAdapter1
 import com.example.paging3demo.ui.adapter.MovieLoadStateAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity : AppCompatActivity() {
+class DashboardFragment : Fragment() {
 
-    private val viewModel: MainViewModel by viewModel()
+    private val viewModel: DashboardViewModel by viewModel()
+    private lateinit var movieAdapter: MovieAdapter
+    private lateinit var binding: FragmentDashboardBinding
 
-    //    private lateinit var movieAdapter: MovieAdapter
-    private lateinit var movieAdapter: MovieAdapter1
-    private lateinit var mainBinding: ActivityMainBinding
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mainBinding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(mainBinding.root)
-
-        init()
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentDashboardBinding.inflate(layoutInflater)
+        return binding.root
     }
 
-    private fun init() {
-//        movieAdapter = MovieAdapter()
-        movieAdapter = MovieAdapter1()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        mainBinding.movieRecycler.apply {
+        movieAdapter = MovieAdapter()
+
+        binding.movieRecycler.apply {
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(true)
-//            adapter = movieAdapter.withLoadStateFooter(
-//                footer = MovieLoadStateAdapter { movieAdapter.retry() }
-//            )
-
             adapter = movieAdapter.withLoadStateHeaderAndFooter(
                 header = MovieLoadStateAdapter(movieAdapter::retry),
                 footer = MovieLoadStateAdapter(movieAdapter::retry)
             )
         }
 
-//        lifecycleScope.launch {
-//            viewModel.movies.collectLatest {
-//                movieAdapter.submitData(it)
-//            }
-//        }
-
         lifecycleScope.launch {
-            viewModel.movies2.collectLatest {
+            viewModel.movies.collectLatest {
                 movieAdapter.submitData(it)
             }
         }
 
-        mainBinding.btnRetry.setOnClickListener {
+        binding.btnRetry.setOnClickListener {
             movieAdapter.retry()
         }
 
         // show the loading state for the first load
         movieAdapter.addLoadStateListener { loadState ->
             if (loadState.refresh is LoadState.Loading) {
-                mainBinding.btnRetry.visibility = View.GONE
+                binding.btnRetry.visibility = View.GONE
 
                 // Show ProgressBar
-                mainBinding.progressBar.visibility = View.VISIBLE
+                binding.progressBar.visibility = View.VISIBLE
             } else {
                 // Hide ProgressBar
-                mainBinding.progressBar.visibility = View.GONE
+                binding.progressBar.visibility = View.GONE
 
                 // If we have an error, show a toast
                 val errorState = when {
                     loadState.append is LoadState.Error -> loadState.append as LoadState.Error
                     loadState.prepend is LoadState.Error -> loadState.prepend as LoadState.Error
                     loadState.refresh is LoadState.Error -> {
-                        mainBinding.btnRetry.visibility = View.VISIBLE
+                        binding.btnRetry.visibility = View.VISIBLE
                         loadState.refresh as LoadState.Error
                     }
                     else -> null
                 }
                 errorState?.let {
-                    Toast.makeText(this, it.error.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, it.error.message, Toast.LENGTH_LONG).show()
                 }
             }
         }

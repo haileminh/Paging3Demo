@@ -1,15 +1,15 @@
-package com.example.paging3demo.ui
+package com.example.paging3demo.ui.main.ui.separators
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.example.paging3demo.data.model.Movie
 import com.example.paging3demo.data.repository.Repository
 import com.example.paging3demo.data.repository.paged.MoviePagingSource
+import com.example.paging3demo.utils.Constants.DEFAULT_PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class MainViewModel(private val repository: Repository) : ViewModel() {
+class DashboardViewModel(private val repository: Repository) : ViewModel() {
 
     val movies: Flow<PagingData<MovieModel>> = getMovieListStream()
         .map { pagingData -> pagingData.map { MovieModel.MovieItem(it) } }
@@ -39,17 +39,11 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
             }
         }
 
-
     private fun getMovieListStream(): Flow<PagingData<Movie>> {
-        return Pager(PagingConfig(20)) {
+        return Pager(PagingConfig(DEFAULT_PAGE_SIZE)) {
             MoviePagingSource(repository)
         }.flow
     }
-
-    val movies2: Flow<PagingData<Movie>> = Pager(PagingConfig(pageSize = 20)) {
-        MoviePagingSource(repository)
-    }.flow
-        .cachedIn(viewModelScope)
 }
 
 sealed class MovieModel {
@@ -58,4 +52,5 @@ sealed class MovieModel {
 }
 
 private val MovieModel.MovieItem.roundedVoteCount: Int
-    get() = this.movie.vote_count / 10000
+    get() = this.movie.vote_count / 1000
+
