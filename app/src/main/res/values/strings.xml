@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Paging3Demo</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_home">MovieList</string>
+    <string name="title_dashboard">Separators</string>
+    <string name="title_notifications">Local</string>
 </resources>

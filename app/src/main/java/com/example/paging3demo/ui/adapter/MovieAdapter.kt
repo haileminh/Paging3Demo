@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.paging3demo.R
 import com.example.paging3demo.databinding.MovieItemBinding
 import com.example.paging3demo.databinding.MovieItemSeperatorBinding
-import com.example.paging3demo.ui.MovieModel
+import com.example.paging3demo.ui.main.ui.separators.MovieModel
 
 class MovieAdapter : PagingDataAdapter<MovieModel, RecyclerView.ViewHolder>(
     MovieModelComparator

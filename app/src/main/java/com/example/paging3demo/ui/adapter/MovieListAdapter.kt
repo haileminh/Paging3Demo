@@ -6,13 +6,10 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.paging3demo.R
 import com.example.paging3demo.data.model.Movie
 import com.example.paging3demo.databinding.MovieItemBinding
-import com.example.paging3demo.databinding.MovieItemSeperatorBinding
-import com.example.paging3demo.ui.MovieModel
 
-class MovieAdapter1 : PagingDataAdapter<Movie, RecyclerView.ViewHolder>(MovieComparator) {
+class MovieListAdapter : PagingDataAdapter<Movie, RecyclerView.ViewHolder>(MovieComparator) {
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -33,9 +30,6 @@ class MovieAdapter1 : PagingDataAdapter<Movie, RecyclerView.ViewHolder>(MovieCom
 
     class MovieViewHolder(val movieItemBinding: MovieItemBinding) :
         RecyclerView.ViewHolder(movieItemBinding.root)
-
-    class MovieSeparatorViewHolder(val movieItemSeperatorBinding: MovieItemSeperatorBinding) :
-        RecyclerView.ViewHolder(movieItemSeperatorBinding.root)
 
     object MovieComparator : DiffUtil.ItemCallback<Movie>() {
         override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean {
