@@ -1,4 +1,4 @@
-package com.example.paging3demo.ui.main.ui.home
+package com.example.paging3demo.ui.main.ui.movie
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,7 +12,7 @@ import com.example.paging3demo.data.repository.paged.MoviePagingSource
 import com.example.paging3demo.utils.Constants.DEFAULT_PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
 
-class HomeViewModel(private val repository: Repository) : ViewModel() {
+class MovieViewModel(private val repository: Repository) : ViewModel() {
 
     val movies: Flow<PagingData<Movie>> =
         Pager(

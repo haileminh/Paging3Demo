@@ -1,4 +1,4 @@
-package com.example.paging3demo.ui.main.ui.home
+package com.example.paging3demo.ui.main.ui.movie
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,25 +9,25 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.paging3demo.databinding.FragmentHomeBinding
+import com.example.paging3demo.databinding.FragmentMovieBinding
 import com.example.paging3demo.ui.adapter.MovieListAdapter
 import com.example.paging3demo.ui.adapter.MovieLoadStateAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class HomeFragment : Fragment() {
+class MovieFragment : Fragment() {
 
-    private val viewModel: HomeViewModel by viewModel()
+    private val viewModel: MovieViewModel by viewModel()
     private lateinit var movieListAdapter: MovieListAdapter
-    private lateinit var binding: FragmentHomeBinding
+    private lateinit var binding: FragmentMovieBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentHomeBinding.inflate(layoutInflater)
+        binding = FragmentMovieBinding.inflate(layoutInflater)
         return binding.root
     }
 
@@ -38,7 +38,8 @@ class HomeFragment : Fragment() {
         binding.movieRecycler.apply {
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(true)
-            adapter = movieListAdapter.withLoadStateFooter(
+            adapter = movieListAdapter
+                .withLoadStateFooter(
                 footer = MovieLoadStateAdapter(movieListAdapter::retry)
             )
         }

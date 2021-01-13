@@ -4,28 +4,52 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.example.paging3demo.R
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.ExperimentalPagingApi
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.paging3demo.databinding.FragmentNotificationsBinding
+import com.example.paging3demo.ui.adapter.MovieListAdapter
+import com.example.paging3demo.ui.adapter.MovieLoadStateAdapter
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NotificationsFragment : Fragment() {
 
-    private lateinit var notificationsViewModel: NotificationsViewModel
+    private val viewModel: NotificationsViewModel by viewModel()
+    private lateinit var movieListAdapter: MovieListAdapter
+    private lateinit var binding: FragmentNotificationsBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        notificationsViewModel =
-            ViewModelProvider(this).get(NotificationsViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_notifications, container, false)
-        val textView: TextView = root.findViewById(R.id.text_notifications)
-        notificationsViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
-        return root
+        binding = FragmentNotificationsBinding.inflate(layoutInflater)
+        return binding.root
+    }
+
+    @ExperimentalPagingApi
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        movieListAdapter = MovieListAdapter()
+
+        binding.movieRecycler.apply {
+            layoutManager = LinearLayoutManager(context)
+            setHasFixedSize(true)
+            adapter = movieListAdapter
+                .withLoadStateFooter(
+                    footer = MovieLoadStateAdapter(movieListAdapter::retry)
+                )
+        }
+
+        lifecycleScope.launch {
+            viewModel.movies.distinctUntilChanged().collectLatest {
+                movieListAdapter.submitData(it)
+            }
+        }
     }
 }
